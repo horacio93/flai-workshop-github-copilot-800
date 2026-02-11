@@ -33,6 +33,7 @@ class Activity(models.Model):
     user_id = models.CharField(max_length=24)
     activity_type = models.CharField(max_length=50)
     duration = models.IntegerField()  # in minutes
+    distance = models.FloatField(default=0.0)  # in kilometers
     calories_burned = models.IntegerField()
     date = models.DateTimeField()
     notes = models.TextField(blank=True)

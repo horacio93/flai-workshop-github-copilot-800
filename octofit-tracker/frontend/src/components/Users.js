@@ -31,37 +31,51 @@ function Users() {
       });
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading users...</p></div>;
-  if (error) return <div className="container mt-4"><p>Error: {error}</p></div>;
+  if (loading) return (
+    <div className="container mt-4">
+      <div className="loading-container">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading users...</span>
+        </div>
+      </div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="container mt-4">
+      <div className="alert alert-danger" role="alert">
+        <h4 className="alert-heading">Error!</h4>
+        <p>{error}</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="container mt-4">
-      <h2>Users</h2>
+      <h2 className="page-title">👥 Users</h2>
       <div className="table-responsive">
         <table className="table table-striped table-hover">
           <thead className="table-dark">
             <tr>
-              <th>Username</th>
+              <th>Name</th>
               <th>Email</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Active</th>
+              <th>Team</th>
+              <th>Created At</th>
             </tr>
           </thead>
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
                 <tr key={user.id}>
-                  <td>{user.username}</td>
+                  <td><strong>{user.name}</strong></td>
                   <td>{user.email}</td>
-                  <td>{user.first_name}</td>
-                  <td>{user.last_name}</td>
-                  <td>{user.is_active ? '✓' : '✗'}</td>
+                  <td>{user.team_name || <span className="text-muted">No team</span>}</td>
+                  <td>{new Date(user.created_at).toLocaleDateString()}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">No users found</td>
+                <td colSpan="4" className="text-center">No users found</td>
               </tr>
             )}
           </tbody>

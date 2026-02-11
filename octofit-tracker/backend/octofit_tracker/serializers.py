@@ -4,14 +4,25 @@ from .models import User, Team, Activity, Leaderboard, Workout
 
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
+    team_name = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ['id', 'name', 'email', 'password', 'team_id', 'created_at']
+        fields = ['id', 'name', 'email', 'password', 'team_id', 'team_name', 'created_at']
         extra_kwargs = {'password': {'write_only': True}}
     
     def get_id(self, obj):
         return str(obj._id)
+    
+    def get_team_name(self, obj):
+        if obj.team_id:
+            try:
+                from bson import ObjectId
+                team = Team.objects.get(_id=ObjectId(obj.team_id))
+                return team.name
+            except (Team.DoesNotExist, Exception):
+                return None
+        return None
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -27,13 +38,25 @@ class TeamSerializer(serializers.ModelSerializer):
 
 class ActivitySerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
+    user_name = serializers.SerializerMethodField()
+    calories = serializers.IntegerField(source='calories_burned')
     
     class Meta:
         model = Activity
-        fields = ['id', 'user_id', 'activity_type', 'duration', 'calories_burned', 'date', 'notes']
+        fields = ['id', 'user_id', 'user_name', 'activity_type', 'duration', 'distance', 'calories', 'calories_burned', 'date', 'notes']
     
     def get_id(self, obj):
         return str(obj._id)
+    
+    def get_user_name(self, obj):
+        if obj.user_id:
+            try:
+                from bson import ObjectId
+                user = User.objects.get(_id=ObjectId(obj.user_id))
+                return user.name
+            except (User.DoesNotExist, Exception):
+                return None
+        return None
 
 
 class LeaderboardSerializer(serializers.ModelSerializer):

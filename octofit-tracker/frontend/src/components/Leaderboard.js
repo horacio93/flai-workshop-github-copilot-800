@@ -31,12 +31,28 @@ function Leaderboard() {
       });
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading leaderboard...</p></div>;
-  if (error) return <div className="container mt-4"><p>Error: {error}</p></div>;
+  if (loading) return (
+    <div className="container mt-4">
+      <div className="loading-container">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading leaderboard...</span>
+        </div>
+      </div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="container mt-4">
+      <div className="alert alert-danger" role="alert">
+        <h4 className="alert-heading">Error!</h4>
+        <p>{error}</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="container mt-4">
-      <h2>Leaderboard</h2>
+      <h2 className="page-title">🏆 Leaderboard</h2>
       <div className="table-responsive">
         <table className="table table-striped table-hover">
           <thead className="table-dark">
@@ -50,15 +66,26 @@ function Leaderboard() {
           </thead>
           <tbody>
             {leaderboard.length > 0 ? (
-              leaderboard.map((entry, index) => (
-                <tr key={entry.id || index}>
-                  <td>{index + 1}</td>
-                  <td>{entry.user_name || entry.user}</td>
-                  <td>{entry.team_name || entry.team || 'N/A'}</td>
-                  <td><strong>{entry.total_points || entry.points || 0}</strong></td>
-                  <td>{entry.activity_count || entry.activities || 0}</td>
-                </tr>
-              ))
+              leaderboard.map((entry, index) => {
+                let rankClass = '';
+                if (index === 0) rankClass = 'rank-1';
+                else if (index === 1) rankClass = 'rank-2';
+                else if (index === 2) rankClass = 'rank-3';
+                
+                return (
+                  <tr key={entry.id || index}>
+                    <td>
+                      <span className={`rank-badge ${rankClass}`}>
+                        {index + 1}
+                      </span>
+                    </td>
+                    <td><strong>{entry.user_name || entry.user}</strong></td>
+                    <td>{entry.team_name || entry.team || 'N/A'}</td>
+                    <td><span className="badge bg-success">{entry.total_points || entry.points || 0} pts</span></td>
+                    <td>{entry.activity_count || entry.activities || 0}</td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td colSpan="5" className="text-center">No leaderboard data found</td>

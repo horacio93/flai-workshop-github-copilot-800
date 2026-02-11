@@ -31,35 +31,55 @@ function Teams() {
       });
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading teams...</p></div>;
-  if (error) return <div className="container mt-4"><p>Error: {error}</p></div>;
+  if (loading) return (
+    <div className="container mt-4">
+      <div className="loading-container">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading teams...</span>
+        </div>
+      </div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="container mt-4">
+      <div className="alert alert-danger" role="alert">
+        <h4 className="alert-heading">Error!</h4>
+        <p>{error}</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="container mt-4">
-      <h2>Teams</h2>
+      <h2 className="page-title">👫 Teams</h2>
       <div className="row">
         {teams.length > 0 ? (
           teams.map((team) => (
             <div key={team.id} className="col-md-4 mb-3">
-              <div className="card">
+              <div className="card h-100">
+                <div className="card-header bg-primary text-white">
+                  <h5 className="card-title mb-0">{team.name}</h5>
+                </div>
                 <div className="card-body">
-                  <h5 className="card-title">{team.name}</h5>
                   <p className="card-text">{team.description}</p>
-                  <p className="card-text">
-                    <small className="text-muted">
-                      Created: {new Date(team.created_at).toLocaleDateString()}
-                    </small>
-                  </p>
                   {team.members && team.members.length > 0 && (
-                    <div>
-                      <strong>Members:</strong>
-                      <ul className="list-unstyled">
+                    <div className="mb-3">
+                      <h6 className="text-primary">👥 Members ({team.members.length}):</h6>
+                      <ul className="list-group list-group-flush">
                         {team.members.map((member, index) => (
-                          <li key={index}>{member}</li>
+                          <li key={index} className="list-group-item px-0">
+                            <i className="bi bi-person-check"></i> {member}
+                          </li>
                         ))}
                       </ul>
                     </div>
                   )}
+                </div>
+                <div className="card-footer text-muted">
+                  <small>
+                    📅 Created: {new Date(team.created_at).toLocaleDateString()}
+                  </small>
                 </div>
               </div>
             </div>

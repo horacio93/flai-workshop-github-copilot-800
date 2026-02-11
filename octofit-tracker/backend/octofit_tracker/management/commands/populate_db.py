@@ -81,6 +81,17 @@ class Command(BaseCommand):
         self.stdout.write('Creating activities...')
         activity_types = ['Running', 'Cycling', 'Swimming', 'Weightlifting', 'Yoga', 'Boxing', 'HIIT']
         
+        # Distance mapping for different activity types (km per minute)
+        distance_rates = {
+            'Running': 0.15,    # ~9 km/h
+            'Cycling': 0.33,    # ~20 km/h
+            'Swimming': 0.03,   # ~2 km/h
+            'Weightlifting': 0.0,
+            'Yoga': 0.0,
+            'Boxing': 0.0,
+            'HIIT': 0.0,
+        }
+        
         for user in created_users:
             # Create 5-10 activities per user
             num_activities = random.randint(5, 10)
@@ -90,11 +101,16 @@ class Command(BaseCommand):
                 calories = duration * random.randint(5, 12)
                 days_ago = random.randint(1, 30)
                 
+                # Calculate distance based on activity type and duration
+                base_distance_rate = distance_rates.get(activity_type, 0.0)
+                distance = round(base_distance_rate * duration * random.uniform(0.8, 1.2), 2)
+                
                 Activity.objects.create(
                     _id=ObjectId(),
                     user_id=str(user._id),
                     activity_type=activity_type,
                     duration=duration,
+                    distance=distance,
                     calories_burned=calories,
                     date=datetime.now() - timedelta(days=days_ago),
                     notes=f'{activity_type} session for hero training',
